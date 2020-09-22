@@ -1,14 +1,15 @@
-package com.wzy.activemq.message;
+package com.wzy.activemq.features.delay;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 
 import javax.jms.*;
+import java.util.Calendar;
 
-public class JMSQueueComsumerAsyn {
+public class ComsumerAsyn {
 
     private static final String ACTIVEMQ_URL = "tcp://192.168.1.203:61616";
 
-    private static final String QUEUE_NAME = "queue01";
+    private static final String QUEUE_NAME = "Queue-延迟发送";
 
     public static void main(String[] args) throws JMSException, InterruptedException {
         // 1.创建连接工厂，按照给定的URL，采用默认的用户名密码
@@ -29,12 +30,12 @@ public class JMSQueueComsumerAsyn {
         consumer.setMessageListener(new MessageListener() {
             public void onMessage(Message message) {
                 try {
-                    if(message != null && message instanceof TextMessage){
+                    if(message instanceof TextMessage){
+                        Calendar calendar = Calendar.getInstance();
+                        System.out.println("收到消息的时间:"+ calendar.get(Calendar.HOUR_OF_DAY) + ":"
+                                + calendar.get(Calendar.MINUTE) + ":"
+                                + calendar.get(Calendar.SECOND));
                         System.out.println(((TextMessage)message).getText());
-//                        ((TextMessage)message).getIntProperty()
-                    } else if (message != null && message instanceof MapMessage) {
-                        int num = ((MapMessage)message).getInt("map");
-                        System.out.println("map message num: "+ num);
                     }
                 } catch (JMSException e) {
                     e.printStackTrace();
